@@ -22,15 +22,17 @@
             circle(element.x, element.y, element.r);
           } else if (element.elementType === "line") {
             line(element.x1, element.y1, element.x2, element.y2);
+          } else {
+            console.log("unknown element type");
           }
         });
       }
 
       // create a websocket client
       // the commands that the client can receive are:
-      // - add: { "command": "add-element", "payload": { "elementType": "circle", "x": 10, "y": 30, "r": 10 } } - the client should return the index of the element
-      // - remove: { "command": "remove-element", "payload": { "index": 0 } }
-      // - update: { "command": "update-element", "payload": { "index": 0, "x": 10, "y": 40, "r": 20 } }
+      // - add: { "command": "add-element", "payload": { "elementType": "circle", "x": 10, "y": 30, "r": 10 }, "timestamp": 123456789 } - the client should return the index of the element
+      // - remove: { "command": "remove-element", "payload": { "index": 0 }, "timestamp": 123456789 }
+      // - update: { "command": "update-element", "payload": { "index": 0, "x": 10, "y": 40, "r": 20 }, "timestamp": 123456789 }
 
       const ws = new WebSocket("ws://localhost:1234");
 
@@ -50,6 +52,8 @@
           element.x = data.payload.x;
           element.y = data.payload.y;
           element.r = data.payload.r;
+        } else {
+          console.log("unknown command");
         }
       };
     </script>
