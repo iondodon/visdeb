@@ -30,9 +30,9 @@
 
       // create a websocket client
       // the commands that the client can receive are:
-      // - add: { "command": "add-element", "payload": { "elementType": "circle", "x": 10, "y": 30, "r": 10 }, "timestamp": 123456789 } - the client should return the index of the element
-      // - remove: { "command": "remove-element", "payload": { "index": 0 }, "timestamp": 123456789 }
-      // - update: { "command": "update-element", "payload": { "index": 0, "x": 10, "y": 40, "r": 20 }, "timestamp": 123456789 }
+      // - add: { "command": "addElement", "payload": { "elementType": "circle", "x": 10, "y": 30, "r": 10 }, "timestamp": 123456789 } - the client should return the index of the element
+      // - remove: { "command": "removeElement", "payload": { "index": 0 }, "timestamp": 123456789 }
+      // - update: { "command": "updateElement", "payload": { "index": 0, "x": 10, "y": 40, "r": 20 }, "timestamp": 123456789 }
 
       const ws = new WebSocket("ws://localhost:1234");
 
@@ -43,11 +43,11 @@
       ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
 
-        if (data.command === "add-element") {
+        if (data.command === "addElement") {
           elements.push(data.payload);
-        } else if (data.command === "remove-element") {
+        } else if (data.command === "removeElement") {
           elements.splice(data.payload.index, 1);
-        } else if (data.command === "update-element") {
+        } else if (data.command === "updateElement") {
           const element = elements[data.payload.index];
           element.x = data.payload.x;
           element.y = data.payload.y;
