@@ -6,6 +6,7 @@ import json
 async def algo(websocket):
   for i in range(10):
     command = {
+        "type": "request",
         "command": "addElement",
         "payload": {
             "elementType": "circle",
@@ -19,9 +20,29 @@ async def algo(websocket):
     command_json_string = json.dumps(command)
     await websocket.send(command_json_string)
 
+    await asyncio.sleep(2)
+    
+    response = await websocket.recv()
+    print(response)
+  
+  # now backwards remove elements
+  for i in range(10):
+    command = {
+        "type": "request",
+        "command": "removeElement",
+        "payload": {
+            "index": 9 - i
+        },
+        "timestamp": time.time()
+    }
+
+    command_json_string = json.dumps(command)
+    await websocket.send(command_json_string)
+
     await asyncio.sleep(1)
     
-    received_data = await websocket.recv()
+    response = await websocket.recv()
+    print(response)
 
 async def run(websocket, path):
   await algo(websocket)

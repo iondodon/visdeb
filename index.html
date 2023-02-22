@@ -44,14 +44,41 @@
         const data = JSON.parse(event.data);
 
         if (data.command === "addElement") {
-          elements.push(data.payload);
+          const index = elements.push(data.payload) - 1;
+          const response = {
+            type: "response",
+            command: "addElement",
+            payload: {
+              index,
+            },
+            timestamp: data.timestamp,
+          };
+          ws.send(JSON.stringify(response));
         } else if (data.command === "removeElement") {
           elements.splice(data.payload.index, 1);
+          const response = {
+            type: "response",
+            command: "removeElement",
+            payload: {
+              index: data.payload.index,
+            },
+            timestamp: data.timestamp,
+          };
+          ws.send(JSON.stringify(response));
         } else if (data.command === "updateElement") {
           const element = elements[data.payload.index];
           element.x = data.payload.x;
           element.y = data.payload.y;
           element.r = data.payload.r;
+          const response = {
+            type: "response",
+            command: "updateElement",
+            payload: {
+              index: data.payload.index,
+            },
+            timestamp: data.timestamp,
+          };
+          ws.send(JSON.stringify(response));
         } else {
           console.log("unknown command");
         }
