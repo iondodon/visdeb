@@ -10,8 +10,8 @@ async def algo(websocket):
   for i in range(len(data)):
     p5_new_element = {
       "elementType": "rect",
-      "x": i * 10,
-      "y": 10,
+      "x": i * 20,
+      "y": 20,
       "w": 2
     }
     p5_structure.append(p5_new_element)
