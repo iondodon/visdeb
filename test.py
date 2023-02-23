@@ -4,45 +4,34 @@ import time
 import json
 
 async def algo(websocket):
-  for i in range(10):
-    command = {
-        "type": "request",
-        "command": "addElement",
-        "payload": {
-            "elementType": "circle",
-            "x": 10 * i,
-            "y": 10 * i,
-            "r": 10
-        },
-        "timestamp": time.time()
+  data = [9, 8, 7, 6, 4, 3, 2, 1]
+  p5_structure = []
+
+  for i in range(len(data)):
+    p5_new_element = {
+      "elementType": "rect",
+      "x": i * 10,
+      "y": 10,
+      "w": 2
     }
-
-    command_json_string = json.dumps(command)
-    await websocket.send(command_json_string)
-
-    await asyncio.sleep(2)
-    
-    response = await websocket.recv()
-    print(response)
-  
-  # now backwards remove elements
-  for i in range(10):
-    command = {
-        "type": "request",
-        "command": "removeElement",
-        "payload": {
-            "index": 9 - i
-        },
-        "timestamp": time.time()
+    p5_structure.append(p5_new_element)
+    p5_request = {
+      "type": "request",
+      "command": "update",
+      "payload": p5_structure,
+      "timestamp": time.time()
     }
+    await websocket.send(json.dumps(p5_request))
+    p5_response = await websocket.recv()
+    print(p5_response)
 
-    command_json_string = json.dumps(command)
-    await websocket.send(command_json_string)
+    time.sleep(1)
 
-    await asyncio.sleep(1)
-    
-    response = await websocket.recv()
-    print(response)
+  for i in range(len(data)):
+    for j in range(len(data) - 1):
+      if data[j] > data[j + 1]:
+        data[j], data[j + 1] = data[j + 1], data[j]
+        time.sleep(1)
 
 async def run(websocket, path):
   await algo(websocket)

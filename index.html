@@ -7,7 +7,7 @@
   </head>
   <body>
     <script>
-      const elements = [];
+      let structure = null;
 
       function setup() {
         createCanvas(400, 400);
@@ -17,22 +17,20 @@
         background(220);
         fill(255, 0, 0);
 
-        elements.forEach((element) => {
-          if (element.elementType === "circle") {
-            circle(element.x, element.y, element.r);
-          } else if (element.elementType === "line") {
-            line(element.x1, element.y1, element.x2, element.y2);
+        if (structure) {
+          drawStructure();
+        }
+      }
+
+      const drawStructure = () => {
+        structure.forEach((element) => {
+          if (element.elementType === "rect") {
+            rect(element.x, element.y, element.w);
           } else {
             console.log("unknown element type");
           }
         });
-      }
-
-      // create a websocket client
-      // the commands that the client can receive are:
-      // - add: { "command": "addElement", "payload": { "elementType": "circle", "x": 10, "y": 30, "r": 10 }, "timestamp": 123456789 } - the client should return the index of the element
-      // - remove: { "command": "removeElement", "payload": { "index": 0 }, "timestamp": 123456789 }
-      // - update: { "command": "updateElement", "payload": { "index": 0, "x": 10, "y": 40, "r": 20 }, "timestamp": 123456789 }
+      };
 
       const ws = new WebSocket("ws://localhost:1234");
 
@@ -42,39 +40,15 @@
 
       ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
+        console.log(data);
 
-        if (data.command === "addElement") {
-          const index = elements.push(data.payload) - 1;
+        if (data.command === "update") {
+          structure = data.payload;
           const response = {
             type: "response",
-            command: "addElement",
+            command: "update",
             payload: {
-              index,
-            },
-            timestamp: data.timestamp,
-          };
-          ws.send(JSON.stringify(response));
-        } else if (data.command === "removeElement") {
-          elements.splice(data.payload.index, 1);
-          const response = {
-            type: "response",
-            command: "removeElement",
-            payload: {
-              index: data.payload.index,
-            },
-            timestamp: data.timestamp,
-          };
-          ws.send(JSON.stringify(response));
-        } else if (data.command === "updateElement") {
-          const element = elements[data.payload.index];
-          element.x = data.payload.x;
-          element.y = data.payload.y;
-          element.r = data.payload.r;
-          const response = {
-            type: "response",
-            command: "updateElement",
-            payload: {
-              index: data.payload.index,
+              status: "updated",
             },
             timestamp: data.timestamp,
           };
