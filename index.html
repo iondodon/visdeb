@@ -7,7 +7,7 @@
   </head>
   <body>
     <script>
-      let structure = null;
+      let structure = [];
 
       function setup() {
         createCanvas(1200, 800);
@@ -16,18 +16,22 @@
       function draw() {
         background(220);
         fill(255, 0, 0);
-
-        if (structure) {
-          drawStructure();
-        }
+        drawStructure(structure);
       }
 
-      const drawStructure = () => {
+      const drawStructure = (structure) => {
         structure.forEach((element) => {
           if (element.elementType === "rect") {
+            fill(element.color);
             rect(element.x, element.y, element.w);
+          } else if (element.elementType === "text") {
+            fill(element.color);
+            text(element.text, element.x, element.y, element.x2, element.y2);
           } else {
             console.log("unknown element type");
+          }
+          if (element.children) {
+            drawStructure(element.children);
           }
         });
       };
